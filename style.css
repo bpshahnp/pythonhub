@@ -220,7 +220,40 @@ pre {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
 }
+/* Add these styles to your style.css */
+.search-box {
+    flex: 0 1 350px;
+    margin: 0 1rem;
+}
 
+.search-box input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-box input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+
+/* Update media queries for smaller screens */
+@media (max-width: 768px) {
+    .header-content {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-box {
+        order: 3;
+        flex: 0 0 100%;
+        margin: 0;
+    }
+}
 @media (max-width: 768px) {
     .menu-toggle {
         display: flex;
