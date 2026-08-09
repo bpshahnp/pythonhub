@@ -712,6 +712,12 @@ let currentCategory = 'all';
 async function initPyodide() {
     try {
         pyodideInstance = await loadPyodide({
+            // Add the stdin handler using window.prompt
+            stdin: () => {
+                let result = prompt("Python is asking for input:");
+                // Return an empty string if the user clicks cancel to prevent crashes
+                return result !== null ? result : ""; 
+            },
             stdout: (text) => {
                 if (activeOutputElement) {
                     activeOutputElement.textContent += text; 
