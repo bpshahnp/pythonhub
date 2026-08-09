@@ -52,9 +52,11 @@ const loaderBanner = document.getElementById('pyodide-loader');
 const menuToggle = document.getElementById('menu-toggle');
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
+const searchInput = document.getElementById('search-input');
 
 let pyodideInstance = null;
 let activeOutputElement = null;
+let currentCategory = 'all';
 
 async function initPyodide() {
     try {
@@ -89,15 +91,23 @@ async function initPyodide() {
 
 initPyodide();
 
-function renderSnippets(filterCategory = 'all') {
+function renderSnippets() {
     snippetContainer.innerHTML = ''; 
 
-    const filteredSnippets = filterCategory === 'all' 
-        ? snippets 
-        : snippets.filter(s => s.category === filterCategory);
+    const searchQuery = searchInput.value.toLowerCase().trim();
+
+    const filteredSnippets = snippets.filter(snippet => {
+        const matchesCategory = currentCategory === 'all' || snippet.category === currentCategory;
+        const matchesSearch = searchQuery === '' || 
+            snippet.title.toLowerCase().includes(searchQuery) || 
+            snippet.description.toLowerCase().includes(searchQuery) || 
+            snippet.code.toLowerCase().includes(searchQuery);
+
+        return matchesCategory && matchesSearch;
+    });
 
     if (filteredSnippets.length === 0) {
-        snippetContainer.innerHTML = '<p>No snippets found for this category.</p>';
+        snippetContainer.innerHTML = '<p>No snippets found matching your criteria.</p>';
         return;
     }
 
@@ -169,15 +179,19 @@ categoryButtons.forEach(button => {
         categoryButtons.forEach(btn => btn.classList.remove('active'));
         e.target.classList.add('active');
 
-        const category = e.target.getAttribute('data-category');
+        currentCategory = e.target.getAttribute('data-category');
         currentCategoryTitle.textContent = e.target.textContent;
-        renderSnippets(category);
+        renderSnippets();
 
         if (window.innerWidth <= 768) {
             sidebar.classList.remove('active');
             overlay.classList.remove('active');
         }
     });
+});
+
+searchInput.addEventListener('input', () => {
+    renderSnippets();
 });
 
 menuToggle.addEventListener('click', () => {
