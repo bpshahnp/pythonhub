@@ -11,7 +11,6 @@ const snippets = [
         title: "List Comprehension",
         category: "data-structures",
         description: "Create a new list by applying an expression to each item in an iterable.",
-        // Notice how the code is now naturally spread across multiple lines
         code: `squares = [x**2 for x in range(10)]
 print(squares)`
     },
@@ -60,7 +59,6 @@ let activeOutputElement = null;
 async function initPyodide() {
     try {
         pyodideInstance = await loadPyodide({
-            // REMOVED the extra + '\n' from both functions below
             stdout: (text) => {
                 if (activeOutputElement) {
                     activeOutputElement.textContent += text; 
@@ -119,7 +117,7 @@ function renderSnippets(filterCategory = 'all') {
                 </div>
             </div>
             <p style="margin-bottom: 1rem;">${snippet.description}</p>
-            <pre><code>${escapeHTML(snippet.code)}</code></pre>
+            <pre><code class="language-python">${escapeHTML(snippet.code)}</code></pre>
             <div class="output-container" id="output-${snippet.id}"></div>
         `;
 
@@ -133,6 +131,10 @@ function renderSnippets(filterCategory = 'all') {
 
         snippetContainer.appendChild(card);
     });
+
+    if (window.Prism) {
+        Prism.highlightAll();
+    }
 }
 
 async function runPythonCode(code, outputId, btnElement) {

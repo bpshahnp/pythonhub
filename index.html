@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Code Snippets</title>
+    <title>Python Code Repository</title>
     <link rel="stylesheet" href="style.css">
     
+    <!-- Prism.js Syntax Highlighter Theme CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
     <!-- Pyodide Python Interpreter -->
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <h1>.py HUB</h1>
+            <h1>Python Code Repository</h1>
             <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">
                 <span></span>
                 <span></span>
@@ -44,6 +47,11 @@
     </div>
 
     <div class="overlay" id="overlay"></div>
+
+    <!-- Prism.js Core & Python Grammar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>
