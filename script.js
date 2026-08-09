@@ -825,21 +825,55 @@ async function runPythonCode(code, outputId, btnElement) {
     }
 }
 
-categoryButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
-        categoryButtons.forEach(btn => btn.classList.remove('active'));
+const categoryList = document.getElementById('category-list');
+
+// Function to dynamically generate categories from the snippets array
+function renderCategories() {
+    // 1. Extract unique categories using a Set
+    const uniqueCategories = [...new Set(snippets.map(snippet => snippet.category))];
+
+    // 2. Start with the default 'All Snippets' button
+    categoryList.innerHTML = `
+        <li>
+            <button class="category-btn active" data-category="all">All Snippets</button>
+        </li>
+    `;
+
+    // 3. Loop through unique categories and create buttons
+    uniqueCategories.forEach(category => {
+        const li = document.createElement('li');
+        li.innerHTML = `<button class="category-btn" data-category="${category}">${category}</button>`;
+        categoryList.appendChild(li);
+    });
+}
+
+// Use Event Delegation to handle clicks on dynamically generated buttons
+categoryList.addEventListener('click', (e) => {
+    // Ensure we are clicking on a category button
+    if (e.target.classList.contains('category-btn')) {
+        // Remove 'active' class from all buttons
+        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+        
+        // Add 'active' class to the clicked button
         e.target.classList.add('active');
 
+        // Update the current category state and UI
         currentCategory = e.target.getAttribute('data-category');
         currentCategoryTitle.textContent = e.target.textContent;
+        
+        // Re-render the snippets
         renderSnippets();
 
+        // Close sidebar on mobile
         if (window.innerWidth <= 768) {
             sidebar.classList.remove('active');
             overlay.classList.remove('active');
         }
-    });
+    }
 });
+
+// Initialize the categories on load
+renderCategories();
 
 searchInput.addEventListener('input', () => {
     renderSnippets();
