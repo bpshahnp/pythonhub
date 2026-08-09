@@ -816,7 +816,15 @@ async function runPythonCode(code, outputId, btnElement) {
     btnElement.textContent = "Running...";
 
     try {
-        await pyodideInstance.runPythonAsync(code);
+        // Automatically mock input() calls so they don't crash the browser
+        let processedCode = code.replace(/input\s*\((.*?)\)/g, (match, p1) => {
+            // Prompt the user or supply a smart default based on the prompt text
+            let promptText = p1 ? p1.replace(/['"]/g, '') : "Enter value:";
+            let userInput = prompt(promptText, "4"); // Default value "4" provided
+            return userInput !== null ? `"${userInput}"` : '""';
+        });
+
+        await pyodideInstance.runPythonAsync(processedCode);
         
         if (activeOutputElement.textContent.trim() === "") {
              activeOutputElement.textContent = "[Program executed successfully with no output]";
@@ -830,7 +838,6 @@ async function runPythonCode(code, outputId, btnElement) {
         activeOutputElement = null;
     }
 }
-
 const categoryList = document.getElementById('category-list');
 
 // Function to dynamically generate categories from the snippets array
