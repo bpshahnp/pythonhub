@@ -816,15 +816,40 @@ async function runPythonCode(code, outputId, btnElement) {
     btnElement.textContent = "Running...";
 
     try {
-        // Automatically mock input() calls so they don't crash the browser
-        let processedCode = code.replace(/input\s*\((.*?)\)/g, (match, p1) => {
-            // Prompt the user or supply a smart default based on the prompt text
-            let promptText = p1 ? p1.replace(/['"]/g, '') : "Enter value:";
-            let userInput = prompt(promptText, "4"); // Default value "4" provided
-            return userInput !== null ? `"${userInput}"` : '""';
-        });
+        let finalCode = code;
 
-        await pyodideInstance.runPythonAsync(processedCode);
+        // Check if the snippet uses input()
+        const inputMatch = code.match(/input\s*\((.*?)\)/);
+        if (inputMatch) {
+            let promptText = inputMatch[1] ? inputMatch[1].replace(/['"]/g, '') : "Enter value: ";
+            
+            // Print the prompt text inside the output box first
+            activeOutputElement.textContent += promptText;
+
+            // Create an inline input element right inside the output container
+            let userInput = await new Promise((resolve) => {
+                let inputField = document.createElement('input');
+                inputField.type = 'text';
+                inputField.className = 'inline-input';
+                activeOutputElement.appendChild(inputField);
+                inputField.focus();
+
+                inputField.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        let val = inputField.value;
+                        inputField.remove();
+                        // Echo back what the user typed into the output feed
+                        activeOutputElement.textContent += val + "\n";
+                        resolve(val);
+                    }
+                });
+            });
+
+            // Substitute the input() expression with the user's typed value
+            finalCode = code.replace(/input\s*\(.*?\)/g, `"${userInput}"`);
+        }
+
+        await pyodideInstance.runPythonAsync(finalCode);
         
         if (activeOutputElement.textContent.trim() === "") {
              activeOutputElement.textContent = "[Program executed successfully with no output]";
